@@ -4,7 +4,7 @@ from nmigen_boards.icebreaker import ICEBreakerPlatform
 from nmigen.build import Resource, Pins, Attrs
 
 
-class HelloWorld(Elaboratable):
+class Gpio(Elaboratable):
     def __init__(self, maxperiod):
         self.maxperiod = maxperiod
         self.counter = Signal(range(maxperiod))
@@ -19,6 +19,7 @@ class HelloWorld(Elaboratable):
             self.gpio = platform.request("gpio")
 
             with m.If(self.counter == 0):
+                # Toggle pin and led after maxperiod clockcycles
                 m.d.sync += [self.led.eq(~self.led),
                              self.gpio.eq(~self.gpio),
                              self.counter.eq(self.maxperiod)]
@@ -30,7 +31,7 @@ class HelloWorld(Elaboratable):
 if __name__ == "__main__":
     # This example shows how a single pin can be added
     # to the resources to use it as GPIO.
-    dut = HelloWorld(3000000)
+    dut = Gpio(3000000)
     p = ICEBreakerPlatform()
 
     # Add GPIO pin to resources
